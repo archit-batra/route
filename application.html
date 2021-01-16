@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <title>Status</title>
+</head>
+
+<body>
+
+<div class="container-fluid">
+
+    <div id="status">
+
+        <nav class="nav nav-pills justify-content-center mt-3">
+            <a class="nav-link" href="configuration.html">Configuration</a>
+            <a class="nav-link" href="status.html">Status</a>
+            <a class="nav-link active" href="application.html">Application</a>
+        </nav>
+
+        <div class="row">
+
+            <div class="col-3">
+                <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+                    <a class="nav-link active" id="v-pills-basic-tab"
+                       data-toggle="pill" href="#v-pills-basic" role="tab" aria-controls="v-pills-basic"
+                       aria-selected="true">BASIC</a>
+                    <a class="nav-link" id="v-pills-lan-tab" data-toggle="pill"
+                       href="#v-pills-lan" role="tab" aria-controls="v-pills-lan" aria-selected="false">LAN</a>
+                    <a class="nav-link" id="v-pills-wlan-tab" data-toggle="pill"
+                       href="#v-pills-wlan" role="tab" aria-controls="v-pills-wlan" aria-selected="false">WLAN</a>
+                    <a class="nav-link" id="v-pills-wwan-tab" data-toggle="pill"
+                       href="#v-pills-wwan" role="tab" aria-controls="v-pills-wwan" aria-selected="false">WWAN</a>
+                </div>
+            </div>
+
+            <div class="col-9">
+                <div class="tab-content" id="v-pills-tabContent">
+
+                    <div class="tab-pane fade show active" id="v-pills-basic" role="tabpanel"
+                         aria-labelledby="v-pills-basic-tab">
+
+                        <form method="post">
+                            <input type="hidden" name="message" value="Save Basic Application was clicked"/>
+                            <input type="submit" class="btn btn-secondary float-right" value="Save Application"/>
+                            <br>
+                            <br>
+                        </form>
+
+                        <div class="text-center">
+
+                            <form method="post">
+                                <input type="hidden" name="message" value="Apply Basic Application was clicked">
+                                <div class="row form-group mt-3" v-for="base in basic">
+                                    <label :for="base.id" class="col-sm-2 col-form-label">{{base.name}}</label>
+                                    <div class="col-sm-10">
+                                        <input type="text" class="form-control" :id="base.id" :name="base.id">
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-sm">
+                                        <input type="submit" class="btn btn-secondary" value="Apply"/>
+                                    </div>
+                                </div>
+
+                            </form>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="tab-pane fade" id="v-pills-lan" role="tabpanel" aria-labelledby="v-pills-lan-tab">
+
+                        <form method="post">
+                            <input type="hidden" name="message" value="Save LAN Application was clicked"/>
+                            <input type="submit" class="btn btn-secondary float-right" value="Save Application"/>
+                            <br>
+                        </form>
+
+                        <div class="text-center">
+
+                            <form method="post">
+                                <input type="hidden" name="message" value="Apply LAN Application was clicked"/>
+                                <div class="row form-group mt-4" v-for="(data, index) in lanData" v-if="index < 2">
+                                    <label :for="data.id" class="col-sm-2 col-form-label">{{data.name}}</label>
+                                    <div class="col-sm-10">
+                                        <input type="text" class="form-control" :id="data.id" :name="data.id">
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-sm">
+                                        <input type="submit" class="btn btn-secondary" value="Apply"/>
+                                    </div>
+                                </div>
+
+                            </form>
+
+                        </div>
+
+                    </div>
+
+                    <div class="tab-pane fade" id="v-pills-wlan" role="tabpanel" aria-labelledby="v-pills-wlan-tab">
+
+                        <form method="post">
+                            <input type="hidden" name="message" value="Save WLAN Application was clicked"/>
+                            <input type="submit" class="btn btn-secondary float-right" value="Save Application"/>
+                            <br>
+                        </form>
+
+                        <div class="text-center">
+
+                            <form method="post">
+                                <input type="hidden" name="message" value="Apply WLAN Application was clicked"/>
+                                <div class="row form-group mt-4" v-for="(data, index) in lanData.slice().reverse()"
+                                     v-if="index < 2">
+                                    <label :for="data.id" class="col-sm-2 col-form-label">{{data.name}}</label>
+                                    <div class="col-sm-10">
+                                        <input type="text" class="form-control" :id="data.id" :name="data.id">
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-sm">
+                                        <input type="submit" class="btn btn-secondary" value="Apply"/>
+                                    </div>
+                                </div>
+
+                            </form>
+
+                        </div>
+
+
+                    </div>
+
+                    <div class="tab-pane fade" id="v-pills-wwan" role="tabpanel" aria-labelledby="v-pills-wwan-tab">
+
+                        <form method="post">
+                            <input type="hidden" name="message" value="Save WWAN Application was clicked"/>
+                            <input type="submit" class="btn btn-secondary float-right" value="Save Application"/>
+                            <br>
+                        </form>
+
+                        <div class="text-center">
+
+                            <div class="row mt-3">
+                                <div class="col-sm">
+                                    <div class="font-weight-bold">Timeout</div>
+                                </div>
+                            </div>
+
+                            <form method="post">
+                                <input type="hidden" name="message" value="Apply WWAN Application was clicked"/>
+                                <div class="row form-group mt-4" v-for="(data, index) in wwanData" v-if="index < 3">
+                                    <label :for="data.id" class="col-sm-2 col-form-label">{{data.name}}</label>
+                                    <div class="col-sm-10">
+                                        <input type="text" class="form-control" :id="data.id" :name="data.id">
+                                    </div>
+                                </div>
+
+                                <div class="row form-group mt-5">
+                                    <label for="clientId" class="col-sm-2 col-form-label">Client ID</label>
+                                    <div class="col-sm-10">
+                                        <input type="text" class="form-control" id="clientId" name="clientId">
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-sm">
+                                        <input type="submit" class="btn btn-secondary" value="Apply"/>
+                                    </div>
+                                </div>
+
+                            </form>
+
+                        </div>
+
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+        crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+        integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+        crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+        crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script>
+    new Vue({
+        el: '#status',
+        data: {
+            basic: [
+                {id: 'ip', name: 'Server IP'},
+                {id: 'port', name: 'MQTT Port'},
+                {id: 'pub', name: 'Topic (PUB)'},
+                {id: 'sub', name: 'Topic (SUB)'},
+                {id: 'username', name: 'Username'},
+                {id: 'password', name: 'Password'}
+            ],
+            lanData: [
+                {id: 'timer', name: 'Keepalive Timer Value'},
+                {id: 'id', name: 'Client ID'},
+                {id: 'timeout', name: 'Timeout Value'}
+            ],
+            wwanData: [
+                {id: 'packetTimeout', name: 'Packet Timeout'},
+                {id: 'retryTimes', name: 'Retry Times'},
+                {id: 'timeoutNotice', name: 'Timeout Notice'},
+                {id: 'id', name: 'Client ID'},
+            ]
+        },
+        methods: {}
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <title>Status</title>
+</head>
+
+<body>
+
+<div class="container-fluid">
+
+    <div id="status">
+
+        <nav class="nav nav-pills justify-content-center mt-3">
+            <a class="nav-link" href="configuration.html">Configuration</a>
+            <a class="nav-link active" href="status.html">Status</a>
+            <a class="nav-link" href="application.html">Application</a>
+        </nav>
+
+        <div class="row">
+
+            <div class="col-3">
+                <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+                    <a class="nav-link active" id="v-pills-gateway-tab" data-toggle="pill"
+                       href="#v-pills-gateway" role="tab" aria-controls="v-pills-gateway" aria-selected="true"
+                       @click="submitGateway();">GATEWAY</a>
+                    <a class="nav-link" id="v-pills-lan-tab" data-toggle="pill"
+                       href="#v-pills-lan" role="tab" aria-controls="v-pills-lan" aria-selected="false"
+                       @click="submitLan();">LAN</a>
+                    <a class="nav-link" id="v-pills-wlan-tab" data-toggle="pill"
+                       href="#v-pills-wlan" role="tab" aria-controls="v-pills-wlan" aria-selected="false"
+                       @click="submitWlan();">WLAN</a>
+                </div>
+            </div>
+
+            <div class="col-9">
+                <div class="tab-content" id="v-pills-tabContent">
+
+                    <div class="tab-pane fade show active" id="v-pills-gateway" role="tabpanel"
+                         aria-labelledby="v-pills-gateway-tab">
+
+                        <div class="text-center">
+
+                            <div class="row mt-3">
+                                <div class="col-sm">
+                                    <label class="font-weight-bold col-form-label">Information</label>
+                                </div>
+                            </div>
+
+                            <div class="row form-group mt-3" v-for="info in information">
+                                <label :for="info.id" class="col-sm col-form-label">{{info.name}}</label>
+                                <div class="col-sm">
+                                    <span :id="info.id">{{info.value}}</span>
+                                </div>
+                            </div>
+
+                            <div class="row mt-3">
+                                <div class="col-sm">
+                                    <label class="font-weight-bold col-form-label">Status</label>
+                                </div>
+                            </div>
+
+                            <div class="row form-group mt-3" v-for="state in status">
+                                <label :for="state.id" class="col-sm col-form-label">{{state.name}}</label>
+                                <div class="col-sm">
+                                    <span :id="state.id">{{state.value}}</span>
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="tab-pane fade" id="v-pills-lan" role="tabpanel" aria-labelledby="v-pills-lan-tab">
+
+                        <div class="text-center">
+
+                            <div class="row form-group mt-3" v-for="(data, index) in lanData">
+                                <label :for="data.id" class="col-sm col-form-label">{{data.name}}</label>
+                                <div class="col-sm">
+                                    <span :id="data.id">{{data.value}}</span>
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="tab-pane fade" id="v-pills-wlan" role="tabpanel" aria-labelledby="v-pills-wlan-tab">
+
+                        <div class="text-center">
+
+                            <div class="row form-group mt-3" v-for="(data, index) in wlanData">
+                                <label :for="data.id" class="col-sm col-form-label">{{data.name}}</label>
+                                <div class="col-sm">
+                                    <span :id="data.id">{{data.value}}</span>
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+        crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+        integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+        crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+        crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script>
+    new Vue({
+        el: '#status',
+        data: {
+            information: [
+                {id: 'modelNo', name: 'Model No.', value: '__________'},
+                {id: 'swVer', name: 'Software Ver.', value: '__________'},
+                {id: 'hwVer', name: 'Hardware Ver.', value: '__________'},
+                {id: 'certNo', name: 'Certificate No.', value: '__________'},
+            ],
+            status: [
+                {id: 'upTime', name: 'System Up Time', value: '__________'},
+                {id: 'app', name: 'Application', value: '__________'},
+                {id: 'broker', name: 'Connection with Broker', value: '__________'},
+            ],
+            lanData: [
+                {id: 'ip', name: 'Device IP', value: '__________'},
+                {id: 'mask', name: 'Subnet Mask', value: '__________'},
+                {id: 'gateway', name: 'Default Gateway', value: '__________'},
+                {id: 'time', name: 'Lease Time (DHCP)', value: '_______sec'},
+                {id: 'link', name: 'Link', value: 'UP'}
+                ],
+            wlanData: [
+                {id: 'ip', name: 'Device IP', value: '__________'},
+                {id: 'mask', name: 'Subnet Mask', value: '__________'},
+                {id: 'gateway', name: 'Default Gateway', value: '__________'},
+                {id: 'time', name: 'Lease Time (DHCP)', value: '_______sec'},
+                {id: 'ssid', name: 'SSID', value: '__________'},
+                {id: 'password', name: 'Password', value: '__________'},
+            ]
+        },
+        methods: {
+            submitGateway: function () {
+                axios.post('', {
+                    message: 'Status Gateway was clicked'
+                })
+            },
+            submitLan: function () {
+                axios.post('', {
+                    message: 'Status LAN was clicked'
+                })
+            },
+            submitWlan: function () {
+                axios.post('', {
+                    message: 'Status WLAN was clicked'
+                })
+            }
+        }
+    });
+</script>
+</body>
+</html>

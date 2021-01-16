@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <title>Configuration</title>
+    <style>
+        body {
+            counter-reset: Serial;
+        }
+
+        #sendFormData tbody tr th:first-child:before {
+            counter-increment: Serial;
+            content: counter(Serial);
+        }
+
+        #getFormData {
+            counter-reset: Serial;
+        }
+
+        #getFormData tbody tr th:first-child:before {
+            counter-increment: Serial;
+            content: counter(Serial);
+        }
+    </style>
+
+</head>
+
+<body>
+
+<div class="container-fluid">
+
+    <div id="configuration">
+
+        <nav class="nav nav-pills justify-content-center mt-3">
+            <a class="nav-link active" href="configuration.html">Configuration</a>
+            <a class="nav-link" href="status.html">Status</a>
+            <a class="nav-link" href="application.html">Application</a>
+        </nav>
+
+        <div class="row">
+
+            <div class="col-3">
+                <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+                    <a class="nav-link active" id="v-pills-system-tab"
+                       data-toggle="pill" href="#v-pills-system" role="tab" aria-controls="v-pills-system"
+                       aria-selected="true">SYSTEM</a>
+                    <a class="nav-link" id="v-pills-lan-tab" data-toggle="pill"
+                       href="#v-pills-lan" role="tab" aria-controls="v-pills-lan" aria-selected="false">LAN</a>
+                    <a class="nav-link" id="v-pills-wlan-tab" data-toggle="pill"
+                       href="#v-pills-wlan" role="tab" aria-controls="v-pills-wlan" aria-selected="false">WLAN</a>
+                    <a class="nav-link" id="v-pills-wwan-tab" data-toggle="pill"
+                       href="#v-pills-wwan" role="tab" aria-controls="v-pills-wwan" aria-selected="false">WWAN</a>
+                    <a class="nav-link" id="v-pills-time-tab" data-toggle="pill"
+                       href="#v-pills-time" @click="getTime();" role="tab" aria-controls="v-pills-time"
+                       aria-selected="false">TIME</a>
+                </div>
+            </div>
+
+            <div class="col-9">
+                <div class="tab-content" id="v-pills-tabContent">
+
+                    <div class="tab-pane fade show active" id="v-pills-system" role="tabpanel"
+                         aria-labelledby="v-pills-system-tab">
+
+                        <form method="post">
+                            <input type="hidden" name="message" value="Save System Configuration was clicked"/>
+                            <input type="submit" class="btn btn-secondary float-right" value="Save Configuration"/>
+                            <br>
+                        </form>
+
+                        <div id="content" class="text-center">
+
+                            <div class="text-center mt-3">
+                                <div class="row">
+                                    <div class="col-sm mt-2">
+                                        <input type="button" class="btn btn-secondary" id="module" @click="getStatus();"
+                                               value="Set Module as Root"/>
+                                    </div>
+                                    <div class="col-sm mt-3">
+                                        <span class="alert alert-light" role="alert">{{message}}</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="text-center">
+                                <div class="row">
+                                    <div class="col-sm mt-2">
+                                        <label class="font-weight-bold mt-3 mb-3">PAN ID</label>
+                                    </div>
+                                    <div class="col-sm mt-3">
+                                        <form method="post">
+                                            <input type="text" name="panId" class="form-control" v-model="panId"/>
+                                        </form>
+                                    </div>
+                                </div>
+                                <div class="col-sm mt-3">
+                                    <input type="button" class="btn btn-secondary" value="Apply" @click="setPanId();"/>
+                                </div>
+                            </div>
+
+                            <div class="text-center">
+                                <label class="font-weight-bold mt-3 mb-3">Add Devices</label>
+                            </div>
+
+                            <form method="post">
+                                <input type="hidden" name="message" value="Apply System Configuration was clicked"/>
+                                <input type="hidden" name="count" :value="count"/>
+                                <div class="table-responsive" id="tableResponsive" style="max-height:250px;">
+                                    <table class="table table-striped table-bordered" id="sendFormData">
+                                        <thead>
+                                        <tr>
+                                            <th scope="col" v-for="header in devicesHeader">{{header}}</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <tr v-for="row in rows">
+                                            <th scope="row"></th>
+                                            <td>
+                                                <input type="text" name="macId" class="form-control"
+                                                       v-model="row.macId"/>
+                                            </td>
+                                            <td>
+                                                <input type="text" name="mapping" class="form-control"
+                                                       v-model="row.mapping"/>
+                                            </td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                                <div class="row mt-3">
+                                    <div class="col-sm">
+                                        <input type="button" value="Add row" v-show="count<20"
+                                               class="btn btn-secondary" @click="addRow();"/>
+
+                                    </div>
+                                    <div class="col-sm mt-1">
+                                        <input type="submit" class="btn btn-secondary" value="Apply"/>
+                                    </div>
+                                </div>
+
+                            </form>
+
+                            <div class="row mt-5 mb-3">
+                                <div class="col-sm">
+                                    <input type="button" value="Read Added Devices" class="btn btn-secondary"
+                                           @click="readAddedDevices();"/>
+                                </div>
+                                <div class="col-sm mt-1">
+                                    <input type="button" value="Scan Connected Devices" class="btn btn-secondary"
+                                           @click="scanConnectedDevices();"/>
+                                </div>
+                            </div>
+
+                            <div class="table-responsive" style="max-height: 250px;" v-show="getDevices">
+                                <table class="table table-striped table-bordered" id="getFormData">
+                                    <thead>
+                                    <tr>
+                                        <th scope="col" v-for="header in devicesHeader">{{header}}</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr v-for="device in getDevicesData">
+                                        <th scope="row"></th>
+                                        <td>
+                                            <span>{{device.macId}}</span>
+                                        </td>
+                                        <td>
+                                            <span>{{device.mapping}}</span>
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <div class="text-center mt-3">
+                                <div class="row">
+                                    <div class="col-sm">
+                                        <label class="font-weight-bold">Gateway NIC MAC ID</label>
+                                    </div>
+                                    <div class="col-sm">
+                                        <span>{{gatewayId}}</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-sm">
+                                    <input type="button" value="Read & Apply To Box"
+                                           class="btn btn-secondary float-left mt-3 mb-3"
+                                           @click="readAndApplyToBox();"/>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-sm">
+                                    <input type="button" value="Test Communication" class="btn btn-secondary mb-3"
+                                           @click="testTheCommunication();"/>
+                                </div>
+                            </div>
+
+                            <div class="text-center border mb-3" v-show="testCommunication"
+                                 style="height: 250px; overflow-y: auto; overflow-x: hidden;">
+                                <div v-for="status in communicationStatus">
+                                    <div class="row">
+                                        <div class="col-sm">
+                                            <label>{{status.box}}</label>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-sm">
+                                            Message Sent :
+                                        </div>
+                                        <div class="col-sm">
+                                            {{status.messageSent}}
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-sm">
+                                            Message Received :
+                                        </div>
+                                        <div class="col-sm">
+                                            {{status.messageReceived}}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="tab-pane fade" id="v-pills-lan" role="tabpanel" aria-labelledby="v-pills-lan-tab">
+
+                        <form method="post">
+                            <input type="hidden" name="message" value="Save LAN Configuration was clicked"/>
+                            <input type="submit" class="btn btn-secondary float-right" value="Save Configuration"/>
+                            <br>
+                        </form>
+
+                        <div class="text-center">
+                            <form method="post">
+
+                                <div class="row mt-3">
+                                    <div class="col-sm">
+                                        <label class="font-weight-bold col-form-label">DHCP Static IP</label>
+                                    </div>
+                                </div>
+
+                                <input type="hidden" name="message" value="Apply LAN Configuration was clicked"/>
+
+                                <div class="row form-group mt-3" v-for="ip in dhcpStaticIp">
+                                    <label :for="ip.id" class="col-sm-2 col-form-label">{{ip.name}}</label>
+                                    <div class="col-sm-10">
+                                        <input type="text" class="form-control" :id="ip.id" :name="ip.id">
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-sm">
+                                        <input type="submit" class="btn btn-secondary" value="Apply"/>
+                                    </div>
+                                </div>
+
+                            </form>
+                        </div>
+
+                    </div>
+
+                    <div class="tab-pane fade" id="v-pills-wlan" role="tabpanel" aria-labelledby="v-pills-wlan-tab">
+
+                        <form method="post">
+                            <input type="hidden" name="message" value="Save WLAN Configuration was clicked"/>
+                            <input type="submit" class="btn btn-secondary float-right" value="Save Configuration"/>
+                            <br>
+                        </form>
+
+                        <div class="text-center">
+                            <form method="post">
+
+                                <div class="row mt-3">
+                                    <div class="col-sm">
+                                        <label class="font-weight-bold col-form-label">DHCP Static IP</label>
+                                    </div>
+                                </div>
+
+                                <input type="hidden" name="message" value="Apply WLAN Configuration was clicked"/>
+
+                                <div class="row form-group mt-3" v-for="ip in dhcpStaticIp">
+                                    <label :for="ip.id" class="col-sm-2 col-form-label">{{ip.name}}</label>
+                                    <div class="col-sm-10">
+                                        <input type="text" class="form-control" :id="ip.id" :name="ip.id">
+                                    </div>
+                                </div>
+
+                                <div class="row mb-3">
+                                    <div class="col-sm">
+                                        <label class="font-weight-bold col-form-label">Wireless</label>
+                                    </div>
+                                </div>
+
+                                <div class="row form-group mb-3">
+                                    <label for="security" class="col-sm-2 col-form-label">Security</label>
+                                    <div class="col-sm-10">
+                                        <select class="form-control" name="security" id="security" v-model="security">
+                                            <option v-for="option in options" :value="option.value">
+                                                {{ option.text }}
+                                            </option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="row form-group mt-3" v-for="user in users">
+                                    <label :for="user.id" class="col-sm-2 col-form-label">{{user.name}}</label>
+                                    <div class="col-sm-10">
+                                        <input type="text" class="form-control" :id="user.id" :name="user.id">
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-sm">
+                                        <input type="submit" class="btn btn-secondary" value="Apply"/>
+                                    </div>
+                                </div>
+
+                            </form>
+                        </div>
+                    </div>
+
+                    <div class="tab-pane fade" id="v-pills-wwan" role="tabpanel" aria-labelledby="v-pills-wwan-tab">
+
+                        <form method="post">
+                            <input type="hidden" name="message" value="Save WWAN Configuration was clicked"/>
+                            <input type="submit" class="btn btn-secondary float-right" value="Save Configuration"/>
+                            <br>
+                        </form>
+
+                        <div class="text-center">
+                            <form method="post">
+                                <div class="row form-group mt-5">
+                                    <label for="apn" class="col-sm-2 col-form-label">Access Point Name (APN)</label>
+                                    <div class="col-sm-10">
+                                        <input type="hidden" name="message"
+                                               value="Apply WWAN Configuration was clicked"/>
+                                        <input type="text" class="form-control" id="apn"
+                                               name="apn">
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-sm">
+                                        <input type="submit" class="btn btn-secondary" value="Apply"/>
+                                    </div>
+                                </div>
+
+                            </form>
+                        </div>
+                    </div>
+
+                    <div class="tab-pane fade" id="v-pills-time" role="tabpanel" aria-labelledby="v-pills-time-tab">
+
+                        <form method="post">
+                            <input type="hidden" name="message" value="Save Time Configuration was clicked"/>
+                            <input type="submit" class="btn btn-secondary float-right" value="Save Configuration"/>
+                            <br>
+                        </form>
+
+                        <div class="text-center">
+                            <form method="post">
+                                <div class="row form-group mt-5">
+                                    <label for="time" class="col-sm col-form-label">Current Time</label>
+                                    <div class="col-sm">
+                                        <span id="time">{{time}}</span>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-sm">
+                                        <input type="hidden" name="message" value="Set Time On Gateway was clicked"/>
+                                        <input type="hidden" name="time" :value="time"/>
+                                        <input type="submit" class="btn btn-secondary" @click="getTime();"
+                                               value="Set Time On Gateway"/>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+        crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+        integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+        crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+        crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+</body>
+<script>
+    new Vue({
+        el: '#configuration',
+        data: {
+            count: 0,
+            devicesHeader: ['S. No.', 'MAC ID', 'Mapping'],
+            getDevicesData: [
+                {macId: '4c,39,09,0a,11,23,0c,0e', mapping: 'b11'},
+                {macId: '2w,23,5d,0a,11,23,0c,0e', mapping: 'a34'},
+                {macId: '2e,56,6u,0a,11,23,0c,0e', mapping: 'c38'},
+                {macId: '7c,83,09,0a,11,23,0c,0e', mapping: 'd45'},
+                {macId: '5c,33,69,0a,11,23,0c,0e', mapping: 'e65'},
+            ],
+            gatewayId: '____________________',
+            message: '',
+            rows: [],
+            getDevices: false,
+            testCommunication: false,
+            communicationStatus: [
+                {box: 'Box1', messageSent: 'sdfefefq', messageReceived: 'ehbvuhwcjs'},
+                {box: 'Box2', messageSent: 'erjgbkj', messageReceived: 'sxqftcqvy'},
+                {box: 'Box3', messageSent: 'rjknbtgr', messageReceived: 'tkhmnokbr'},
+                {box: 'Box4', messageSent: 'dvnjiefe', messageReceived: 'ergbfxwhni'},
+                {box: 'Box5', messageSent: 'bheunuvin', messageReceived: 'whfwcni'},
+                {box: 'Box6', messageSent: 'jtenhuitne', messageReceived: 'rtbneijw'},
+            ],
+            dhcpStaticIp: [
+                {id: 'deviceIp', name: 'Device IP'},
+                {id: 'subnetMask', name: 'Subnet Mask'},
+                {id: 'defaultGateway', name: 'Default Gateway'},
+            ],
+            users: [
+                {id: 'ssid', name: 'SSID'},
+                {id: 'password', name: 'Password'},
+            ],
+            security: 'wpa2psk',
+            options: [
+                {text: 'Open Security', value: 'opensecurity'},
+                {text: 'WEP Security', value: 'wepsecurity'},
+                {text: 'WPA-PSK', value: 'wpapsk'},
+                {text: 'WPA2-PSK', value: 'wpa2psk'},
+                {text: 'WPA Enterprise', value: 'wpaenterprise'},
+                {text: 'WPA2 Enterprise', value: 'wpa2enterprise'},
+                {text: 'WPA2 + TKIP + AES', value: 'wpa2tkipaes'},
+                {text: 'Auto Security', value: 'autosecurity'}
+            ],
+            time: '',
+            panId: ''
+        },
+        updated() {
+            let container = this.$el.querySelector("#tableResponsive");
+            container.scrollTop = container.clientHeight + 850;
+        },
+        methods: {
+            getStatus: function () {
+                let bodyFormData = new FormData();
+                bodyFormData.set('message', 'Set Module as Root was clicked');
+                axios({
+                    method: 'post',
+                    url: '',//api/getStatus.c
+                    data: bodyFormData,
+                    headers: {'Content-Type': 'multipart/form-data'}
+                })
+                this.message = 'Message';
+                /*.then(function (response) {
+                    this.message = response.data;
+                })*/
+            },
+            setPanId: function () {
+                let bodyFormData = new FormData();
+                bodyFormData.set('message', 'PAN ID apply was clicked');
+                bodyFormData.set('panId', this.panId);
+                axios({
+                    method: 'post',
+                    url: '',
+                    data: bodyFormData,
+                    headers: {'Content-Type': 'multipart/form-data'}
+                });
+            },
+            formSubmit: function () {
+                this.rows = [];
+            },
+            addRow: function () {
+                this.count += 1;
+                let elem = document.createElement('tr');
+                this.rows.push({
+                    macId: [],
+                    mapping: []
+                });
+            },
+            readAddedDevices: function () {
+                let bodyFormData = new FormData();
+                bodyFormData.set('message', 'Read Added Devices was clicked');
+                axios({
+                    method: 'post',
+                    url: '',
+                    data: bodyFormData,
+                    headers: {'Content-Type': 'multipart/form-data'}
+                });
+                this.getDevices = true;
+            },
+            scanConnectedDevices: function () {
+                let bodyFormData = new FormData();
+                bodyFormData.set('message', 'Scan Connected Devices was clicked');
+                axios({
+                    method: 'post',
+                    url: '',
+                    data: bodyFormData,
+                    headers: {'Content-Type': 'multipart/form-data'}
+                });
+                this.getDevices = true;
+            },
+            readAndApplyToBox: function () {
+                let bodyFormData = new FormData();
+                bodyFormData.set('message', 'Read & Apply to Box was clicked');
+                axios({
+                    method: 'post',
+                    url: '',
+                    data: bodyFormData,
+                    headers: {'Content-Type': 'multipart/form-data'}
+                });
+                this.rows = [];
+                this.getDevicesData = [];
+                this.gatewayId = '4C,39,09,0A,11,22,0A,0D';
+            },
+            testTheCommunication: function () {
+                let bodyFormData = new FormData();
+                bodyFormData.set('message', 'Test Communication was clicked');
+                axios({
+                    method: 'post',
+                    url: '',
+                    data: bodyFormData,
+                    headers: {'Content-Type': 'multipart/form-data'}
+                });
+                this.testCommunication = true;
+            },
+            getTime: function () {
+                let d = new Date(),
+                    month = d.getMonth() + 1,
+                    hours = d.getHours().toString().length == 1 ? '0' + d.getHours() : d.getHours(),
+                    minutes = d.getMinutes().toString().length == 1 ? '0' + d.getMinutes() : d.getMinutes(),
+                    seconds = d.getSeconds().toString().length == 1 ? '0' + d.getSeconds() : d.getSeconds();
+                this.time = d.getFullYear() + ' ' + month + ' ' + d.getDate() + ' ' + hours + ':' + minutes + ':' + seconds;
+            }
+        }
+    });
+</script>
+</html>
